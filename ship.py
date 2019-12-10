@@ -39,5 +39,7 @@ class Ship(pygame.sprite.Sprite):
             self.screen.blit(self.image_static, [300, self.rect.y])
 
         for item in self.buildings:
-            if item.top.colliderect(self.rect) or item.bottom.colliderect(self.rect):
-                self.die()
+            if self.rect.colliderect(item.bottom) or self.rect.colliderect(item.top):
+                return False
+        return True
+

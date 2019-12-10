@@ -23,10 +23,9 @@ done = False
 buildings_list = []
 clock = pygame.time.Clock()
 player = Ship(screen, buildings_list)
-building = Buildings(screen)
-
-timer = 0
+building = Buildings(screen, player)
 score = 0
+timer = 0
 font = pygame.font.SysFont('Calibri', 25, True, False)
 
 # -------- Main Program Loop -----------
@@ -46,26 +45,27 @@ while not done:
 
     # --- Game logic should go here
     timer += 1
-
-    score_text = font.render(str(score), True, BLACK)
-    screen.blit(score_text, [10, 10])
-
     # --- Screen-clearing code goes here
     #  Here, we clear the screen to white.
     screen.fill(WHITE)
 
     # --- Drawing code should go here
     if timer == 120:
-        buildings_list.append(Buildings(screen))
+        buildings_list.append(Buildings(screen, player))
         timer = 0
 
     for item in buildings_list:
+        if item.bottom.x + 50 < 300 and item.inplay:
+            score += 1
+            item.inplay = False
         if not item.update():
             buildings_list.remove(item)
 
-    player.buildings = buildings_list
 
     player.update()
+    # replace with if statement to check for collision
+    score_text = font.render(str(score), True, RED)
+    screen.blit(score_text, [10, 10])
     # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
 
