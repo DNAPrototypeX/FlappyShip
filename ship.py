@@ -1,4 +1,5 @@
 import pygame
+import sys
 WHITE = (255, 255, 255)
 MAGENTA = (255, 0, 255)
 
@@ -16,10 +17,11 @@ class Ship(pygame.sprite.Sprite):
         self.going_down = True
         self.screen = screen
         self.buildings = buildings
+        self.rect.x = 300
 
     def die(self):
-        print("dead")
-
+        sys.exit()
+        
     def update(self):
         if self.going_down and self.y_speed < 7.6:
             self.y_speed += 0.2
@@ -34,12 +36,13 @@ class Ship(pygame.sprite.Sprite):
             self.rect.y = -1
 
         if not self.going_down:
-            self.screen.blit(self.image_moving, [300, self.rect.y])
+            self.screen.blit(self.image_moving, [self.rect.x, self.rect.y])
         else:
-            self.screen.blit(self.image_static, [300, self.rect.y])
+            self.screen.blit(self.image_static, [self.rect.x, self.rect.y])
 
         for item in self.buildings:
             if self.rect.colliderect(item.bottom) or self.rect.colliderect(item.top):
                 return False
+
         return True
 

@@ -3,6 +3,7 @@
 import pygame
 from ship import Ship
 from buildings import Buildings
+import sys
 # Define some colors, you may want to add more
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -27,6 +28,12 @@ building = Buildings(screen, player)
 score = 0
 timer = 0
 font = pygame.font.SysFont('Calibri', 25, True, False)
+f = open("highscore.txt", "r")
+high_score = f.read()
+high_score_text = font.render("HighScore: " + str(high_score), True, RED)
+f.close()
+
+
 
 # -------- Main Program Loop -----------
 while not done:
@@ -55,17 +62,24 @@ while not done:
         timer = 0
 
     for item in buildings_list:
-        if item.bottom.x + 50 < 300 and item.inplay:
-            score += 1
-            item.inplay = False
         if not item.update():
             buildings_list.remove(item)
+        if item.bottom.x + 50 < 300 and item.inplay:
+            score += 1
+            if score > int(high_score):
+                w = open("highscore.txt", "w")
+                w.write(str(score))
+                w.close()
+            item.inplay = False
 
-
-    player.update()
+    if not player.update():
+        for item in buildings_list:
+            item.speed = 0
+        player.die()
     # replace with if statement to check for collision
     score_text = font.render(str(score), True, RED)
     screen.blit(score_text, [10, 10])
+    screen.blit(high_score_text, [450, 10])
     # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
 
@@ -73,4 +87,6 @@ while not done:
     clock.tick(60)
 
 # Close the window and quit.
+
+
 pygame.quit()
