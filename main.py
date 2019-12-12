@@ -32,8 +32,8 @@ f = open("highscore.txt", "r")
 high_score = f.read()
 high_score_text = font.render("HighScore: " + str(high_score), True, RED)
 f.close()
-
-
+background = pygame.image.load('background.jpg').convert()
+background_x = 0
 
 # -------- Main Program Loop -----------
 while not done:
@@ -57,6 +57,11 @@ while not done:
     screen.fill(WHITE)
 
     # --- Drawing code should go here
+    background_x -= 2
+    if background_x == -1400:
+        background_x = 0
+    screen.blit(background, [background_x, 0])
+
     if timer == 120:
         buildings_list.append(Buildings(screen, player))
         timer = 0

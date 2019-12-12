@@ -7,15 +7,18 @@ class Buildings:
         self.screen = screen
         self.bottom = pygame.Rect(800, random.randrange(127, 495), 50, 500)
         self.top = pygame.Rect(self.bottom.x, self.bottom.y - 500, 50, 375)
+        self.top_image = pygame.image.load('top_building.png').convert()
+        self.bottom_image = pygame.image.load('bottom_building.png').convert()
         self.player = player
         self.inplay = True
         self.speed = -2
+        self.background_x = 0
 
     def update(self):
         self.top.x += self.speed
         self.bottom.x += self.speed
-        pygame.draw.rect(self.screen, (0, 0, 0), self.top)
-        pygame.draw.rect(self.screen, (0, 0, 0), self.bottom)
+        self.screen.blit(self.top_image, self.top)
+        self.screen.blit(self.bottom_image, self.bottom)
         if self.bottom.x < -50:
             return False
         return True
