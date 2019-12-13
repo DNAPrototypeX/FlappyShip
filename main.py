@@ -4,12 +4,14 @@ import pygame
 from ship import Ship
 from buildings import Buildings
 import sys
+
 # Define some colors, you may want to add more
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 153)
 pygame.init()
 
 # Set the width and height of the screen [width, height]
@@ -34,7 +36,35 @@ high_score_text = font.render("HighScore: " + str(high_score), True, RED)
 f.close()
 background = pygame.image.load('background.jpg').convert()
 background_x = 0
+rocket_sound = pygame.mixer.Sound("rocket_sound.wav")
+pygame.mixer.music.load('music.wav')
+pygame.mixer.music.play(-1, 0.0)
+screen.fill(BLACK)
+def drawText(text, font, surface, x, y, clr):
+    textobj = font.render(text, 1, clr)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
 
+def TitleScreen():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:  # pressing escape quits
+                    sys.exit()
+                return
+        screen.fill(WHITE)
+        drawText("Flappy Ship!", font, screen, 50, 50, YELLOW)
+
+
+
+
+
+
+
+TitleScreen()
 # -------- Main Program Loop -----------
 while not done:
     # --- Main event loop
@@ -84,7 +114,11 @@ while not done:
     # replace with if statement to check for collision
     score_text = font.render(str(score), True, RED)
     screen.blit(score_text, [10, 10])
+    score_str = str(score)
+    if score > int(high_score):
+        high_score_text = font.render("HighScore: " + str(score), True, RED)
     screen.blit(high_score_text, [450, 10])
+
     # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
 

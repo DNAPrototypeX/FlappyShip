@@ -24,6 +24,8 @@ class Ship(pygame.sprite.Sprite):
         
     def update(self):
         if self.going_down and self.y_speed < 7.6:
+            if self.rect.y < 0:
+                self.y_speed = 0
             self.y_speed += 0.2
         elif self.y_speed > -7.6:
             self.y_speed -= 0.2
