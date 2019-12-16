@@ -11,7 +11,7 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-YELLOW = (255, 255, 153)
+YELLOW = (255, 255, 0)
 pygame.init()
 
 # Set the width and height of the screen [width, height]
@@ -26,10 +26,10 @@ done = False
 buildings_list = []
 clock = pygame.time.Clock()
 player = Ship(screen, buildings_list)
-building = Buildings(screen, player)
 score = 0
 timer = 0
 font = pygame.font.SysFont('Calibri', 25, True, False)
+title_font = pygame.font.SysFont('Calibri', 72, True, False)
 f = open("highscore.txt", "r")
 high_score = f.read()
 high_score_text = font.render("HighScore: " + str(high_score), True, RED)
@@ -40,14 +40,22 @@ rocket_sound = pygame.mixer.Sound("rocket_sound.wav")
 pygame.mixer.music.load('music.wav')
 pygame.mixer.music.play(-1, 0.0)
 screen.fill(BLACK)
+difficulties = [pygame.Rect(250, 250, 20, 20), pygame.Rect(350, 250, 20, 20), pygame.Rect(450, 250, 20, 20)]
+difficulties_colours = [GREEN, YELLOW, RED]
+difficulties_text = ['Easy', 'Normal', 'Hard']
+speed = 0
+
+
 def drawText(text, font, surface, x, y, clr):
     textobj = font.render(text, 1, clr)
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
+
 def TitleScreen():
-    while True:
+    menu_message = 'Select a difficulty!'
+    while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -55,16 +63,42 @@ def TitleScreen():
                 if event.key == pygame.K_ESCAPE:  # pressing escape quits
                     sys.exit()
                 return
-        screen.fill(WHITE)
-        drawText("Flappy Ship!", font, screen, 50, 50, YELLOW)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for item in difficulties:
+                    if item.collidepoint(m_pos[0], m_pos[1]):
+                        if item == difficulties[0]:
+                            speed = -1.5
+                        elif item == difficulties[1]:
+                            speed = -2
+                        elif item == difficulties[2]:
+                            speed = -3
+                        return speed
+        screen.fill(BLACK)
+        m_pos = pygame.mouse.get_pos()
+        for item in difficulties:
+            if item.collidepoint(m_pos[0], m_pos[1]):
+                item.width = 40
+                item.height = 40
+            else:
+                item.width = 20
+                item.height = 20
+
+        menu_message = "Select a difficulty!"
+        for i in range(len(difficulties)):
+            if difficulties[i].width == 40:
+                pygame.draw.rect(screen, difficulties_colours[i], difficulties[i].move(-10, -10))
+                menu_message = difficulties_text[i]
+                drawText(menu_message, font, screen, 250, 350, YELLOW)
+            elif difficulties[i].width == 20:
+                pygame.draw.rect(screen, difficulties_colours[i], difficulties[i])
+
+        drawText(menu_message, font, screen, 250, 350, YELLOW)
+        drawText("Flappy Ship!", title_font, screen, 175, 100, YELLOW)
+        pygame.display.flip()
 
 
-
-
-
-
-
-TitleScreen()
+speed = TitleScreen()
+buildings_list.append(Buildings(screen, speed, player))
 # -------- Main Program Loop -----------
 while not done:
     # --- Main event loop
@@ -81,20 +115,20 @@ while not done:
                 player.going_down = True
 
     # --- Game logic should go here
-    timer += 1
+
     # --- Screen-clearing code goes here
     #  Here, we clear the screen to white.
     screen.fill(WHITE)
 
     # --- Drawing code should go here
-    background_x -= 2
-    if background_x == -1400:
+    background_x += speed
+    if background_x < -1400:
         background_x = 0
     screen.blit(background, [background_x, 0])
 
-    if timer == 120:
-        buildings_list.append(Buildings(screen, player))
-        timer = 0
+    if buildings_list[len(buildings_list) - 1].bottom.x < 550:
+        buildings_list.append(Buildings(screen, speed, player))
+
 
     for item in buildings_list:
         if not item.update():
