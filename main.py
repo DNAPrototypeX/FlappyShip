@@ -57,12 +57,11 @@ def Main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:  # pressing escape quits
                         sys.exit()
-                    return
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for item in difficulties:
                         if item.collidepoint(m_pos[0], m_pos[1]):
                             if item == difficulties[0]:
-                                speed = -1.5
+                                speed = -1
                             elif item == difficulties[1]:
                                 speed = -2
                             elif item == difficulties[2]:
@@ -167,7 +166,6 @@ def Main():
                     w.write(str(score))
                     w.close()
                 item.inplay = False
-        print(buildings_list[0].speed)
         if not player.update():
             respawn()
         # replace with if statement to check for collision
