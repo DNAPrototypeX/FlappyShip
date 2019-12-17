@@ -19,9 +19,6 @@ class Ship(pygame.sprite.Sprite):
         self.buildings = buildings
         self.rect.x = 300
 
-    def die(self):
-        sys.exit()
-        
     def update(self):
         if self.going_down and self.y_speed < 7.6:
             if self.rect.y < 0:
